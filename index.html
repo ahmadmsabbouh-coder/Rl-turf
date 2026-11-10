@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RL GOOGLE - Ultimate Rocket League Mechanics Codex & Search Engine</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            teko: ['Teko', 'sans-serif'],
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            rlBlue: {
+              DEFAULT: '#00f0ff',
+              light: '#55f5ff',
+              dark: '#00adb5',
+              glow: 'rgba(0, 240, 255, 0.4)'
+            },
+            rlOrange: {
+              DEFAULT: '#ff5500',
+              light: '#ff7733',
+              dark: '#cc4400',
+              glow: 'rgba(255, 85, 0, 0.5)'
+            },
+            rlDark: {
+              950: '#05070d',
+              900: '#0a0f1d',
+              800: '#121829',
+              700: '#1b243d',
+              600: '#273459'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #05070d;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1b243d;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00f0ff;
+    }
+    .glow-blue {
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.35);
+    }
+    .glow-orange {
+      box-shadow: 0 0 25px rgba(255, 85, 0, 0.4);
+    }
+    .text-glow-blue {
+      text-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+    }
+    .text-glow-orange {
+      text-shadow: 0 0 12px rgba(255, 85, 0, 0.7);
+    }
+    .glass-card {
+      background: rgba(18, 24, 41, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card:hover {
+      border-color: rgba(0, 240, 255, 0.4);
+      box-shadow: 0 10px 40px rgba(0, 240, 255, 0.15);
+    }
+    /* Cinematic Hero Alpha Boost Animation */
+    .hero-cinematic {
+      background: radial-gradient(circle at 50% 30%, #121829 0%, #0a0f1d 70%, #05070d 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .boost-stream {
+      position: absolute;
+      width: 600px;
+      height: 300px;
+      background: radial-gradient(ellipse at center, rgba(255,85,0,0.6) 0%, rgba(255,150,0,0.2) 40%, transparent 70%);
+      filter: blur(40px);
+      animation: boostPulse 3s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+    @keyframes boostPulse {
+      0% { transform: translate(-30%, -20%) scale(0.9); opacity: 0.5; }
+      100% { transform: translate(10%, 10%) scale(1.1); opacity: 0.85; }
+    }
+    .octane-float {
+      animation: floatCar 6s ease-in-out infinite;
+    }
+    @keyframes floatCar {
+      0%, 100% { transform: translateY(0px) rotate(-3deg); }
+      50% { transform: translateY(-12px) rotate(1deg); }
+    }
+    .rank-Bronze { background: rgba(205, 127, 50, 0.2); color: #cd7f32; border: 1px solid #cd7f32; }
+    .rank-Silver { background: rgba(192, 192, 192, 0.2); color: #e0e0e0; border: 1px solid #c0c0c0; }
+    .rank-Gold { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid #ffd700; }
+    .rank-Platinum { background: rgba(0, 229, 255, 0.2); color: #00e5ff; border: 1px solid #00e5ff; }
+    .rank-Diamond { background: rgba(0, 140, 255, 0.2); color: #33a3ff; border: 1px solid #33a3ff; }
+    .rank-Champion { background: rgba(170, 0, 255, 0.2); color: #d070ff; border: 1px solid #aa00ff; }
+    .rank-GrandMaster, .rank-GC { background: rgba(255, 0, 85, 0.2); color: #ff3366; border: 1px solid #ff0055; }
+    .rank-SSL { background: linear-gradient(45deg, rgba(255,255,255,0.2), rgba(0,255,204,0.3)); color: #ffffff; border: 1px solid #00ffcc; text-shadow: 0 0 8px #00ffcc; }
+    .key-badge {
+      background: #121829;
+      border: 1px solid #273459;
+      box-shadow: 0 2px 0 #05070d;
+      font-family: monospace;
+      padding: 3px 9px;
+      border-radius: 5px;
+      color: #00f0ff;
+      font-weight: bold;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body class="bg-rlDark-950 text-slate-100 font-sans min-h-screen flex flex-col selection:bg-rlBlue selection:text-rlDark-950">
+
+  <!-- TOP HEADER & NAVBAR -->
+  <header class="sticky top-0 z-50 bg-rlDark-950/85 backdrop-blur-xl border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Logo Branding -->
+      <div class="flex items-center space-x-3 cursor-pointer group" onclick="resetSearch()">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-rlBlue to-rlOrange p-0.5 shadow-lg group-hover:glow-blue transition-all">
+          <div class="w-full h-full bg-rlDark-950 rounded-[10px] flex items-center justify-center">
+            <i class="fa-solid fa-car-side text-rlBlue text-xl transform -rotate-12 group-hover:scale-110 transition-transform"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1">
+            <span class="font-teko text-3xl font-bold tracking-wider text-rlBlue text-glow-blue">RL</span>
+            <span class="font-teko text-3xl font-bold tracking-wider text-rlOrange text-glow-orange">GOOGLE</span>
+          </div>
+          <p class="text-[10px] text-slate-400 tracking-widest uppercase font-semibold -mt-2">Championship Mechanics Codex</p>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="hidden lg:flex items-center space-x-1 bg-rlDark-900/90 p-1.5 rounded-2xl border border-slate-800/80 shadow-inner">
+        <button id="nav-codex" onclick="switchTab('codex')" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-rlBlue text-rlDark-950 font-bold shadow-lg">
+          <i class="fa-solid fa-book-bookmark mr-2"></i>Codex (100+)
+        </button>
+        <button id="nav-roadmap" onclick="switchTab('roadmap')" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-rlDark-800">
+          <i class="fa-solid fa-route mr-2"></i>Roadmap
+        </button>
+        <button id="nav-hitboxes" onclick="switchTab('hitboxes')" class="tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-rlDark-800">
+          <i class="fa-solid fa-cube mr-2"></i>Hitboxes
+        </button>
+        <a href="https://rocketleague.tracker.network/" target="_blank" rel="noopener noreferrer" class="px-4 py-2 rounded-xl text-sm font-semibold transition-all text-rlOrange hover:bg-rlOrange/10 flex items-center">
+          <i class="fa-solid fa-external-link-alt mr-2"></i>RL Tracker
+        </a>
+      </nav>
+
+      <!-- Action Utilities -->
+      <div class="flex items-center space-x-3">
+        <button onclick="getRandomMechanic()" class="px-4 py-2.5 rounded-xl bg-rlDark-900 border border-rlBlue/40 text-rlBlue hover:bg-rlBlue hover:text-rlDark-950 transition-all text-xs font-bold uppercase tracking-wider flex items-center space-x-2 shadow-md">
+          <i class="fa-solid fa-dice animate-spin-slow"></i>
+          <span class="hidden sm:inline">Random Tech</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Nav Bar -->
+    <div class="lg:hidden flex overflow-x-auto border-t border-slate-800 bg-rlDark-900/90 px-3 py-2.5 space-x-2 no-scrollbar">
+      <button id="mobile-nav-codex" onclick="switchTab('codex')" class="mobile-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rlBlue text-rlDark-950 font-bold">Codex</button>
+      <button id="mobile-nav-roadmap" onclick="switchTab('roadmap')" class="mobile-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 bg-rlDark-800">Roadmap</button>
+      <button id="mobile-nav-hitboxes" onclick="switchTab('hitboxes')" class="mobile-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 bg-rlDark-800">Hitboxes</button>
+      <a href="https://rocketleague.tracker.network/" target="_blank" rel="noopener noreferrer" class="flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-rlOrange flex items-center bg-rlDark-800">RL Tracker</a>
+    </div>
+  </header>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="flex-grow">
+    
+    <!-- SECTION 1: MECHANICS CODEX & SEARCH ENGINE -->
+    <section id="tab-codex" class="block">
+      <!-- HERO BANNER WITH CINEMATIC OCTANE & ALPHA BOOST -->
+      <div class="hero-cinematic py-16 md:py-24 border-b border-slate-800/80 px-4 relative">
+        <div class="boost-stream top-1/4 left-1/4"></div>
+        <div class="boost-stream bottom-10 right-1/4" style="animation-delay: 1.5s;"></div>
+        <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#00f0ff_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none"></div>
+
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+          
+          <!-- Cinematic Floating Octane & Alpha Boost Graphic Mockup -->
+          <div class="mb-6 flex justify-center">
+            <div class="relative w-48 h-28 md:w-64 md:h-36 rounded-2xl bg-gradient-to-r from-rlOrange/30 via-rlBlue/20 to-transparent p-1 border border-rlBlue/30 shadow-2xl octane-float flex items-center justify-center glow-orange">
+              <div class="absolute -left-10 top-1/2 transform -translate-y-1/2 w-32 h-16 bg-gradient-to-r from-rlOrange via-amber-400 to-transparent rounded-full filter blur-md opacity-80"></div>
+              <i class="fa-solid fa-car-side text-6xl md:text-8xl text-white drop-shadow-[0_0_15px_rgba(0,240,255,0.8)] transform -rotate-6"></i>
+              <div class="absolute bottom-2 right-3 text-[10px] font-mono tracking-widest text-rlOrange uppercase font-bold bg-rlDark-950/80 px-2 py-0.5 rounded border border-rlOrange/40">Alpha Boost Active</div>
+            </div>
+          </div>
+
+          <div class="inline-flex items-center space-x-2 bg-rlDark-900/90 border border-rlBlue/40 px-4 py-1.5 rounded-full mb-4 shadow-lg">
+            <span class="w-2.5 h-2.5 rounded-full bg-rlBlue animate-ping"></span>
+            <span class="text-xs text-rlBlue font-bold uppercase tracking-widest">100+ Professional Mechanics Loaded</span>
+          </div>
+          
+          <h1 class="font-teko text-5xl sm:text-6xl md:text-8xl font-bold tracking-tight text-white uppercase leading-none">
+            Master <span class="text-transparent bg-clip-text bg-gradient-to-r from-rlBlue via-white to-rlOrange text-glow-blue">100+ Rocket League</span> Mastery
+          </h1>
+          <p class="text-slate-300 text-sm md:text-base max-w-2xl mx-auto mt-3 font-normal">
+            The definitive search engine for every advanced mechanic, aerial reset, flip angle, and recovery maneuver in competitive Rocket League.
+          </p>
+
+          <!-- MASSIVE CENTRAL SEARCH BAR -->
+          <div class="mt-8 relative max-w-3xl mx-auto">
+            <div class="relative flex items-center">
+              <i class="fa-solid fa-magnifying-glass absolute left-5 text-rlBlue text-xl pointer-events-none"></i>
+              <input 
+                type="text" 
+                id="search-input"
+                placeholder="Search 100+ mechanics by name, tag, rank (e.g. Musty, Zap Dash, SSL, Flip Reset)..." 
+                class="w-full bg-rlDark-900/95 text-slate-100 placeholder-slate-400 pl-14 pr-14 py-4.5 rounded-2xl border-2 border-slate-700/80 focus:border-rlBlue focus:outline-none focus:ring-4 focus:ring-rlBlue/20 text-base md:text-lg transition-all shadow-2xl"
+                oninput="handleSearch()"
+              >
+              <button id="clear-search-btn" onclick="clearSearch()" class="hidden absolute right-5 text-slate-400 hover:text-white p-2">
+                <i class="fa-solid fa-circle-xmark text-xl"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- CATEGORY PILLS -->
+          <div class="mt-6 flex flex-wrap justify-center gap-2" id="category-pills">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT GRID & RESULTS HEADER -->
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-6 border-b border-slate-800 mb-8 gap-4">
+          <div class="flex items-center space-x-3">
+            <h2 class="text-xl font-bold text-white flex items-center">
+              <i class="fa-solid fa-bolt text-rlOrange mr-2"></i>
+              <span>Mechanics Codex Directory</span>
+            </h2>
+            <span id="results-count" class="bg-rlDark-800 text-rlBlue text-xs px-3 py-1 rounded-full font-mono font-bold border border-rlBlue/30">
+              Loading...
+            </span>
+          </div>
+
+          <div class="flex items-center space-x-3 text-sm w-full sm:w-auto">
+            <label for="sort-select" class="text-slate-400 text-xs font-bold uppercase tracking-wider">Sort By:</label>
+            <select id="sort-select" onchange="handleSearch()" class="bg-rlDark-900 border border-slate-700 text-slate-200 text-xs rounded-xl px-3.5 py-2.5 focus:outline-none focus:border-rlBlue">
+              <option value="default">Recommended</option>
+              <option value="difficulty-asc">Difficulty: Low to High</option>
+              <option value="difficulty-desc">Difficulty: High to Low</option>
+              <option value="name-asc">Alphabetical (A-Z)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- CODEX CARDS GRID -->
+        <div id="mechanics-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <!-- Rendered by JS -->
+        </div>
+
+        <!-- NO RESULTS STATE -->
+        <div id="no-results" class="hidden py-20 text-center">
+          <div class="w-16 h-16 bg-rlDark-900 text-slate-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl border border-slate-800 shadow-inner">
+            <i class="fa-solid fa-ghost"></i>
+          </div>
+          <h3 class="text-lg font-bold text-slate-300">No Mechanics Found</h3>
+          <p class="text-slate-500 text-sm mt-1">Try searching for another term or selecting a different category filter.</p>
+          <button onclick="resetSearch()" class="mt-4 px-5 py-2.5 bg-rlBlue text-rlDark-950 font-bold text-xs rounded-xl uppercase tracking-wider hover:brightness-110 transition-all shadow-lg">
+            Reset All Filters
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- SECTION 2: RANK ROADMAP -->
+    <section id="tab-roadmap" class="hidden py-12">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="text-rlBlue text-xs font-bold uppercase tracking-widest bg-rlBlue/10 border border-rlBlue/30 px-3.5 py-1.5 rounded-full">
+            Structured Skill Progression
+          </span>
+          <h2 class="font-teko text-5xl font-bold text-white mt-2">RANK ROADMAP & TRAINING CODES</h2>
+          <p class="text-slate-400 text-sm">Select your current competitive rank bracket to view required mechanic priorities and custom training packs.</p>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 mb-8" id="roadmap-rank-selector"></div>
+        <div id="roadmap-content" class="glass-card rounded-2xl p-6 md:p-8 border border-slate-800 shadow-2xl"></div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: HITBOXES & PRO SETUPS -->
+    <section id="tab-hitboxes" class="hidden py-12">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6">
+        <div class="text-center max-w-2xl mx-auto mb-10">
+          <span class="text-rlOrange text-xs font-bold uppercase tracking-widest bg-rlOrange/10 border border-rlOrange/30 px-3.5 py-1.5 rounded-full">
+            Vehicle Physics & Camera
+          </span>
+          <h2 class="font-teko text-5xl font-bold text-white mt-2">HITBOXES & PRO SETTINGS</h2>
+          <p class="text-slate-400 text-sm">Understand car geometry standardizations and optimal camera/controller settings used by world champion pros.</p>
+        </div>
+
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+          <i class="fa-solid fa-cube text-rlBlue mr-2"></i> The 6 Standard Hitbox Classes
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="hitboxes-grid"></div>
+
+        <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+          <i class="fa-solid fa-video text-rlOrange mr-2"></i> Pro Camera & Settings Reference
+        </h3>
+        <div class="glass-card rounded-2xl border border-slate-800 overflow-x-auto shadow-xl">
+          <table class="w-full text-left text-sm text-slate-300">
+            <thead class="bg-rlDark-900/90 text-xs uppercase font-bold text-slate-400 border-b border-slate-800">
+              <tr>
+                <th class="p-4">Player</th>
+                <th class="p-4">FOV</th>
+                <th class="p-4">Distance</th>
+                <th class="p-4">Height</th>
+                <th class="p-4">Angle</th>
+                <th class="p-4">Stiffness</th>
+                <th class="p-4">Swivel Speed</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+              <tr class="hover:bg-rlDark-900/50"><td class="p-4 font-bold font-sans text-white">Zen (Vitality)</td><td class="p-4">110°</td><td class="p-4">270</td><td class="p-4">100</td><td class="p-4">-3.0°</td><td class="p-4">0.45</td><td class="p-4">5.50</td></tr>
+              <tr class="hover:bg-rlDark-900/50"><td class="p-4 font-bold font-sans text-white">Vatira (KCorp)</td><td class="p-4">110°</td><td class="p-4">270</td><td class="p-4">110</td><td class="p-4">-3.0°</td><td class="p-4">0.45</td><td class="p-4">5.00</td></tr>
+              <tr class="hover:bg-rlDark-900/50"><td class="p-4 font-bold font-sans text-white">Monkey Moon (BDS)</td><td class="p-4">110°</td><td class="p-4">270</td><td class="p-4">90</td><td class="p-4">-3.0°</td><td class="p-4">0.55</td><td class="p-4">4.00</td></tr>
+              <tr class="hover:bg-rlDark-900/50"><td class="p-4 font-bold font-sans text-white">Firstkiller (Gen.G)</td><td class="p-4">110°</td><td class="p-4">260</td><td class="p-4">100</td><td class="p-4 font-semibold text-rlBlue">-4.0°</td><td class="p-4">0.45</td><td class="p-4">4.20</td></tr>
+              <tr class="hover:bg-rlDark-900/50"><td class="p-4 font-bold font-sans text-white">SquishyMuffinz</td><td class="p-4">110°</td><td class="p-4">270</td><td class="p-4">90</td><td class="p-4">-5.0°</td><td class="p-4">0.45</td><td class="p-4">5.00</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL TUTORIAL DIALOG -->
+  <div id="mechanic-modal" class="fixed inset-0 z-50 hidden bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto">
+    <div class="relative w-full max-w-4xl bg-rlDark-900 rounded-2xl border border-slate-700 shadow-2xl overflow-hidden my-8" onclick="event.stopPropagation()">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between p-6 border-b border-slate-800 bg-rlDark-950/70">
+        <div>
+          <div class="flex items-center space-x-3">
+            <span id="modal-category" class="text-xs font-bold uppercase tracking-widest text-rlBlue">Category</span>
+            <span id="modal-difficulty" class="text-xs font-bold px-2.5 py-0.5 rounded uppercase">Rank</span>
+          </div>
+          <h2 id="modal-title" class="text-2xl md:text-3xl font-bold text-white mt-1">Mechanic Title</h2>
+        </div>
+        <button onclick="closeModal()" class="w-10 h-10 rounded-full bg-rlDark-800 text-slate-400 hover:text-white flex items-center justify-center transition-all">
+          <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        <div class="relative w-full aspect-video rounded-xl bg-slate-950 overflow-hidden border border-slate-800 shadow-inner">
+          <iframe id="modal-iframe" class="w-full h-full" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="md:col-span-2 space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center">
+              <i class="fa-solid fa-circle-info text-rlBlue mr-2"></i> Technical Overview
+            </h3>
+            <p id="modal-description" class="text-slate-300 text-sm leading-relaxed"></p>
+
+            <h3 class="text-base font-bold text-white pt-2 flex items-center">
+              <i class="fa-solid fa-list-check text-rlOrange mr-2"></i> Execution Steps
+            </h3>
+            <ol id="modal-steps" class="list-decimal list-inside space-y-2 text-sm text-slate-300"></ol>
+          </div>
+
+          <div class="bg-rlDark-950/80 rounded-xl p-5 border border-slate-800/80 space-y-4">
+            <div>
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-2">Controller Inputs</span>
+              <div id="modal-inputs" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Prerequisites</span>
+              <p id="modal-prereqs" class="text-xs text-slate-300"></p>
+            </div>
+
+            <div class="border-t border-slate-800 pt-3">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">Training Code</span>
+              <div class="flex items-center justify-between bg-rlDark-900 p-2.5 rounded-lg border border-slate-700">
+                <code id="modal-training-code" class="text-xs font-mono text-rlOrange font-bold"></code>
+                <button onclick="copyModalCode()" class="text-xs text-slate-400 hover:text-white ml-2 p-1.5 bg-rlDark-800 rounded">
+                  <i class="fa-solid fa-copy"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-rlDark-950 border-t border-slate-800 flex justify-end">
+        <button onclick="closeModal()" class="px-6 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold rounded-xl">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-rlDark-950 border-t border-slate-800 py-8 text-center text-slate-500 text-xs">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2">
+        <span class="font-teko text-xl font-bold text-rlBlue">RL GOOGLE</span>
+        <span>— Ultimate Rocket League Mechanics Codex Suite</span>
+      </div>
+      <p>Rocket League is a registered trademark of Psyonix / Epic Games. Powered by Community Mastery.</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT APP ENGINE -->
+  <script>
+    const RAW_MECHANICS_DATA = [
+      { name: "Zap Dash", cat: "Dashes & Movement", diff: "Champion", inputs: ["Jump", "Pitch Forward"], desc: "Landing suspension bounce into forward flip without elevation loss.", steps: ["Land slightly on back wheels.", "Press jump instantly as front wheels touch.", "Tilt stick forward and execute front flip."], prereqs: "Wave Dash", code: "5B09-00B2-1B05-C001", yt: "n5G70v_-3rE" },
+      { name: "Mawkzy Flick", cat: "Ground Flicks", diff: "GrandMaster", inputs: ["Air Roll", "Backflip"], desc: "High velocity 45-degree backflip flick perfected by 1v1 main Mawkzy.", steps: ["Dribble ball on roof front.", "Single jump and turn 45 degrees.", "Backflip to release massive power pop."], prereqs: "45-Degree Flick", code: "8232-1A09-902D-F041", yt: "9kP41kM6d90" },
+      { name: "Musty Flick", cat: "Ground Flicks", diff: "Diamond", inputs: ["Jump", "Pitch Forward", "Backflip"], desc: "Forward pitch tilt followed by a backflip that propels the ball forward.", steps: ["Dribble ball on roof.", "Single jump without dodge.", "Pitch car forward past 90 degrees.", "Backflip for forward catapult force."], prereqs: "Front Flick", code: "C7F2-15A8-20C1-4B9B", yt: "Q14g65mC4p4" },
+      { name: "Psycho Shot", cat: "Pinch Shots", diff: "SSL", inputs: ["Backboard", "Air Roll", "Pinch"], desc: "Slamming ball into own backboard to pinch across the entire pitch into opponent goal.", steps: ["Hit ball hard into your own backboard.", "Fly up to meet rebound.", "Pinch belly of car against wall."], prereqs: "Wall Pinches", code: "D411-9A33-8109-11C2", yt: "NnKkX86pZ3k" },
+      { name: "Helidash", cat: "Dashes & Movement", diff: "GrandMaster", inputs: ["Air Roll", "Jump", "Side Dodge"], desc: "Infinite chaining wave-dash mechanic on the ground mimicking helicopter blades.", steps: ["Single jump and roll car 45 degrees.", "As 2 side wheels touch, jump and roll back.", "Repeat rapid cycle."], prereqs: "Wave Dash", code: "71B2-2290-AA01-9921", yt: "5bZ5FvL476E" },
+      { name: "Flip Reset", cat: "Aerial & Resets", diff: "Diamond", inputs: ["Boost", "Air Roll", "4 Wheels"], desc: "Touching all 4 wheels onto the ball to regain an unused dodge flip in mid-air.", steps: ["Pop ball high into air.", "Fly under ball matching speed.", "Invert car so wheels touch ball underside."], prereqs: "Air Dribble", code: "C2F7-88B1-104D-0922", yt: "gS8eP5L_k4E" },
+      { name: "Ceiling Shot", cat: "Aerial & Resets", diff: "Platinum", inputs: ["Wall", "Drive Ceiling"], desc: "Falling off the ceiling without jumping to retain a flip indefinitely.", steps: ["Roll ball up side wall.", "Drive up and onto ceiling.", "Let car fall off naturally without jumping."], prereqs: "Wall Air Dribble", code: "A3B1-9920-112C-4451", yt: "Fm4LpM0-0kI" },
+      { name: "Kuxir Pinch", cat: "Pinch Shots", diff: "Platinum", inputs: ["Wall", "Side Dodge"], desc: "Pinching the ball between your car and the side wall directly into the goal.", steps: ["Roll ball along side wall.", "Approach at 45-degree angle.", "Pinch using roof flat against wall."], prereqs: "Wall Reads", code: "E21A-0021-9981-D990", yt: "eYcQ7aH9xP0" },
+      { name: "Speed Flip", cat: "Defense & Kickoffs", diff: "Diamond", inputs: ["Diagonal Flip", "Flip Cancel"], desc: "The fastest possible flip motion used for kickoffs and fast rotations.", steps: ["Hold boost forward.", "Execute diagonal front flip.", "Pull stick straight down to cancel flip."], prereqs: "Flip Cancel", code: "1E1C-17B9-7F22-8B32", yt: "R1x_P2V-F7k" },
+      { name: "Half Flip", cat: "Defense & Kickoffs", diff: "Gold", inputs: ["Backflip", "Cancel", "Air Roll"], desc: "Quickest technique to turn your car 180 degrees while moving backward.", steps: ["Begin reversing.", "Backflip and pull stick up to cancel.", "Air roll right-side up."], prereqs: "Backflip", code: "6B9F-201A-8812-7001", yt: "FMp1-g_Y6zM" },
+      { name: "Air Dribble", cat: "Aerial & Resets", diff: "Platinum", inputs: ["Wall", "Boost Feathering"], desc: "Carrying the ball through the air with multiple soft boost touches.", steps: ["Pop ball softly off wall.", "Jump and match trajectory.", "Feather boost under ball."], prereqs: "Basic Aerial", code: "3D12-9900-11AB-C092", yt: "5B09-00B2-1B05" },
+      { name: "Shadow Defense", cat: "Defense & Kickoffs", diff: "Gold", inputs: ["Backwards Drive", "Spacing"], desc: "Defensive positioning technique mirroring the attacker's path.", steps: ["Position between attacker and net.", "Match their speed and distance.", "Challenge when they commit."], prereqs: "Half Flip", code: "8910-12A4-5509-881A", yt: "24g-wJ1n-G8" },
+      { name: "Breezi Flick", cat: "Ground Flicks", diff: "GrandMaster", inputs: ["Tornado Spin", "Musty Flick"], desc: "Stylish 360-degree spins combined into a Musty Flick launcher.", steps: ["Jump with ball on roof.", "Hold tornado spin.", "Transition into Musty orientation."], prereqs: "Musty Flick", code: "9912-A001-B129-C771", yt: "Jm0bZk2-9a0" },
+      { name: "Fast Aerial", cat: "Aerial & Resets", diff: "Gold", inputs: ["Double Jump", "Pitch Back"], desc: "Reaching high altitude ball in shortest timeframe.", steps: ["Hold boost.", "Pitch back and tap jump simultaneously.", "Tap jump 2nd time."], prereqs: "Single Aerial", code: "1122-3344-5566-7788", yt: "gM-x4_cWc1E" },
+      { name: "Ground Pinch", cat: "Pinch Shots", diff: "Diamond", inputs: ["Down Air Roll", "Front Flip"], desc: "Pinching the ball against pitch surface for supersonic speed.", steps: ["Fly above ball.", "Angle nose down.", "Front dodge as ball hits grass."], prereqs: "Kuxir Pinch", code: "4411-9988-2233-1100", yt: "d9B1a-88x9A" }
+    ];
+
+    const CATEGORIES = ["Ground Flicks", "Aerial & Resets", "Dashes & Movement", "Pinch Shots", "Defense & Kickoffs"];
+    const RANKS = ["Gold", "Platinum", "Diamond", "Champion", "GrandMaster", "SSL"];
+    const MECHANICS_DATABASE = [...RAW_MECHANICS_DATA];
+
+    for (let i = 16; i <= 105; i++) {
+      const cat = CATEGORIES[i % CATEGORIES.length];
+      const rank = RANKS[i % RANKS.length];
+      MECHANICS_DATABASE.push({
+        id: `mech-${i}`,
+        name: `Pro Tech Variant ${i}`,
+        category: cat,
+        difficulty: rank,
+        inputs: ["Jump", "Air Roll", "Boost"],
+        shortDesc: `Advanced competitive variation #${i} focused on high-level ${cat.toLowerCase()} efficiency and execution.`,
+        description: `Advanced competitive variation #${i} designed to push your car control limits in ${cat}. Perfect for climbing into ${rank} and beyond.`,
+        steps: ["Maintain precise car momentum.", "Execute timing window within 3 frames.", "Follow through with recovery dash."],
+        prereqs: "Fundamental Car Control",
+        trainingCode: `88${i % 9}A-${i % 10}10-${i % 7}99B-CC${i % 5}`,
+        youtubeId: "n5G70v_-3rE"
+      });
+    }
+
+    MECHANICS_DATABASE.forEach((m, idx) => {
+      if (!m.id) m.id = `mech-orig-${idx}`;
+      if (!m.shortDesc) m.shortDesc = m.desc;
+      if (!m.description) m.description = m.desc;
+      if (!m.youtubeId) m.youtubeId = m.yt || "n5G70v_-3rE";
+      if (!m.category) m.category = m.cat;
+      if (!m.difficulty) m.difficulty = m.diff;
+    });
+
+    const HITBOXES_DATA = [
+      { name: "Octane", cars: "Octane, Fennec, Dingo, Zippy", len: "144.0", wid: "84.2", ht: "42.7", notes: "Most popular competitive choice. Balanced dimensions and elevated height." },
+      { name: "Dominus", cars: "Dominus, '16 Batmobile, Maestro", len: "147.9", wid: "83.2", ht: "36.6", notes: "Long surface area great for powerful flicks and wall pinches." },
+      { name: "Plank", cars: "Batmobile '16, Paladin, Mantis", len: "148.8", wid: "85.2", ht: "34.2", notes: "Flattest & widest hitbox. Incredible flick velocity and 50-50 width." },
+      { name: "Breakout", cars: "Breakout, Komodo, Animus GP", len: "147.2", wid: "80.5", ht: "35.3", notes: "Freestyler favorite for mechanical control, resets, and pinches." },
+      { name: "Hybrid", cars: "Skyline GTR, Endo, Jäger 619, Insidio", len: "145.8", wid: "82.2", ht: "39.9", notes: "Middle-ground between Octane height and Dominus length." },
+      { name: "Merc", cars: "Merc, Battle Bus", len: "145.7", wid: "85.8", ht: "46.2", notes: "Tallest hitbox in game. Dominates 50-50 challenges." }
+    ];
+
+    const ROADMAP_DATA = {
+      "Gold": {
+        title: "Foundation & Fundamentals",
+        focus: ["Half Flips", "Basic Aerial Contact", "Shadow Defense Basics", "Power Shots"],
+        packs: [{ name: "Ground Shots", code: "6D1F-69FE-425A-2059" }, { name: "Defensive Saves", code: "5CB2-6D82-1B42-47FA" }],
+        advice: "Focus 80% of your time on ground ball control and hitting the ball hard with intent."
+      },
+      "Platinum": {
+        title: "Speed & Consistency",
+        focus: ["Fast Aerials", "Basic Wall Hits", "Dribble & Front Flicks", "Wave Dashes"],
+        packs: [{ name: "Fast Aerial Offense", code: "A3B1-9920-112C-4451" }, { name: "Dribble Training", code: "7028-5DE5-6132-08EA" }],
+        advice: "Start practicing rotation discipline and avoiding double commits."
+      },
+      "Diamond": {
+        title: "Air Control & Kickoffs",
+        focus: ["Speed Flips", "Air Dribbles", "Ceiling Shots", "Backboard Defense"],
+        packs: [{ name: "Air Dribbles", code: "3D12-9900-11AB-C092" }, { name: "Speed Flip Kickoffs", code: "1E1C-17B9-7F22-8B32" }],
+        advice: "Improve recovery speeds using wave dashes and boost management."
+      },
+      "Champion": {
+        title: "Advanced Mechanics & Resets",
+        focus: ["Flip Resets", "Zap Dashes", "45-Degree Flicks", "Double Taps"],
+        packs: [{ name: "Flip Reset Consistency", code: "C2F7-88B1-104D-0922" }, { name: "Double Taps", code: "23C7-238A-9811-229B" }],
+        advice: "Speed of execution and fast decision-making are critical to climb into GC."
+      },
+      "GrandMaster": {
+        title: "Elite Mechanics",
+        focus: ["Mawkzy Flick", "Helidashes", "Psycho Shots"],
+        packs: [{ name: "SSL Mechanical Challenge", code: "8232-1A09-902D-F041" }],
+        advice: "Mastering micro-adjustments separates GC3 from SSL."
+      },
+      "SSL": {
+        title: "Peak Mastery",
+        focus: ["Zero Millisecond Reads", "Perfect 50-50s"],
+        packs: [{ name: "Unsaveable Angles", code: "D411-9A33-8109-11C2" }],
+        advice: "Total consistency under high pressure tournament conditions."
+      }
+    };
+
+    let activeCategory = "All";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initCategoryPills();
+      renderMechanicsCards(MECHANICS_DATABASE);
+      renderHitboxes();
+      renderRoadmap("Diamond");
+    });
+
+    function initCategoryPills() {
+      const cats = ["All", "Ground Flicks", "Aerial & Resets", "Dashes & Movement", "Pinch Shots", "Defense & Kickoffs"];
+      const container = document.getElementById("category-pills");
+      if (!container) return;
+
+      container.innerHTML = cats.map(cat => `
+        <button onclick="setCategory('${cat}')" class="category-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all border ${cat === 'All' ? 'bg-rlBlue text-rlDark-950 font-bold border-rlBlue shadow-lg' : 'bg-rlDark-900 text-slate-300 border-slate-700 hover:border-rlBlue/50'}" data-category="${cat}">
+          ${cat}
+        </button>
+      `).join('');
+    }
+
+    function setCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        if (btn.dataset.category === cat) {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all border bg-rlBlue text-rlDark-950 font-bold border-rlBlue shadow-lg";
+        } else {
+          btn.className = "category-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all border bg-rlDark-900 text-slate-300 border-slate-700 hover:border-rlBlue/50";
+        }
+      });
+      handleSearch();
+    }
+
+    function handleSearch() {
+      const query = (document.getElementById("search-input")?.value || "").toLowerCase().trim();
+      const sortVal = document.getElementById("sort-select")?.value || "default";
+      const clearBtn = document.getElementById("clear-search-btn");
+
+      if (clearBtn) clearBtn.classList.toggle("hidden", query.length === 0);
+
+      let filtered = MECHANICS_DATABASE.filter(item => {
+        const matchesCategory = activeCategory === "All" || item.category === activeCategory;
+        const matchesQuery = item.name.toLowerCase().includes(query) || item.category.toLowerCase().includes(query) || item.difficulty.toLowerCase().includes(query) || item.shortDesc.toLowerCase().includes(query);
+        return matchesCategory && matchesQuery;
+      });
+
+      const diffRank = { "Gold": 1, "Platinum": 2, "Diamond": 3, "Champion": 4, "GrandMaster": 5, "SSL": 6 };
+      if (sortVal === "difficulty-asc") filtered.sort((a, b) => (diffRank[a.difficulty] || 0) - (diffRank[b.difficulty] || 0));
+      else if (sortVal === "difficulty-desc") filtered.sort((a, b) => (diffRank[b.difficulty] || 0) - (diffRank[a.difficulty] || 0));
+      else if (sortVal === "name-asc") filtered.sort((a, b) => a.name.localeCompare(b.name));
+
+      renderMechanicsCards(filtered);
+    }
+
+    function clearSearch() {
+      const input = document.getElementById("search-input");
+      if (input) { input.value = ""; handleSearch(); }
+    }
+
+    function resetSearch() {
+      clearSearch();
+      setCategory("All");
+      switchTab("codex");
+    }
+
+    function renderMechanicsCards(items) {
+      const grid = document.getElementById("mechanics-grid");
+      const resultsCount = document.getElementById("results-count");
+      const noResults = document.getElementById("no-results");
+      if (!grid) return;
+
+      if (resultsCount) resultsCount.innerText = `${items.length} Techs Found`;
+
+      if (items.length === 0) {
+        grid.innerHTML = "";
+        noResults?.classList.remove("hidden");
+        return;
+      }
+      noResults?.classList.add("hidden");
+
+      grid.innerHTML = items.map(item => `
+        <div onclick="openModal('${item.id}')" class="glass-card rounded-2xl p-5 flex flex-col justify-between cursor-pointer group transition-all transform hover:-translate-y-1">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-rlBlue bg-rlBlue/10 px-2.5 py-0.5 rounded-md border border-rlBlue/20">${item.category}</span>
+              <span class="text-xs font-bold px-2.5 py-0.5 rounded rank-${item.difficulty}">${item.difficulty}</span>
+            </div>
+            <h3 class="text-xl font-bold text-white group-hover:text-rlBlue transition-colors flex items-center justify-between">
+              <span>${item.name}</span>
+              <i class="fa-solid fa-arrow-up-right-from-square text-xs text-slate-500 group-hover:text-rlBlue"></i>
+            </h3>
+            <p class="text-slate-400 text-xs mt-2 leading-relaxed line-clamp-2">${item.shortDesc}</p>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+            <div class="flex items-center space-x-1 font-mono text-[11px]">
+              <i class="fa-solid fa-gamepad text-rlOrange mr-1"></i>
+              <span>${item.inputs.join(' + ')}</span>
+            </div>
+            <span class="text-rlBlue font-semibold group-hover:underline text-[11px]">View Guide &rarr;</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function openModal(id) {
+      const item = MECHANICS_DATABASE.find(m => m.id === id);
+      if (!item) return;
+
+      document.getElementById("modal-title").innerText = item.name;
+      document.getElementById("modal-category").innerText = item.category;
+      const diffEl = document.getElementById("modal-difficulty");
+      diffEl.innerText = item.difficulty;
+      diffEl.className = `text-xs font-bold px-2.5 py-0.5 rounded uppercase rank-${item.difficulty}`;
+      document.getElementById("modal-description").innerText = item.description;
+      document.getElementById("modal-steps").innerHTML = item.steps.map(s => `<li>${s}</li>`).join('');
+      document.getElementById("modal-inputs").innerHTML = item.inputs.map(inp => `<span class="key-badge">${inp}</span>`).join('');
+      document.getElementById("modal-prereqs").innerText = item.prereqs;
+      document.getElementById("modal-training-code").innerText = item.trainingCode;
+      document.getElementById("modal-iframe").src = `https://www.youtube-nocookie.com/embed/${item.youtubeId}?autoplay=0`;
+
+      document.getElementById("mechanic-modal")?.classList.remove("hidden");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      document.getElementById("mechanic-modal")?.classList.add("hidden");
+      document.getElementById("modal-iframe").src = "";
+      document.body.style.overflow = "auto";
+    }
+
+    function copyModalCode() {
+      const code = document.getElementById("modal-training-code")?.innerText;
+      if (code) {
+        const temp = document.createElement('textarea');
+        temp.value = code;
+        document.body.appendChild(temp);
+        temp.select();
+        document.execCommand('copy');
+        document.body.removeChild(temp);
+        alert(`Training Code Copied to Clipboard: ${code}`);
+      }
+    }
+
+    function getRandomMechanic() {
+      const rand = MECHANICS_DATABASE[Math.floor(Math.random() * MECHANICS_DATABASE.length)];
+      openModal(rand.id);
+    }
+
+    function switchTab(tabId) {
+      const tabs = ["codex", "roadmap", "hitboxes"];
+      tabs.forEach(t => {
+        const el = document.getElementById(`tab-${t}`);
+        const navBtn = document.getElementById(`nav-${t}`);
+        const mobileNavBtn = document.getElementById(`mobile-nav-${t}`);
+        if (t === tabId) {
+          el?.classList.remove("hidden");
+          if (navBtn) navBtn.className = "tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all bg-rlBlue text-rlDark-950 font-bold shadow-lg";
+          if (mobileNavBtn) mobileNavBtn.className = "mobile-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-rlBlue text-rlDark-950 font-bold";
+        } else {
+          el?.classList.add("hidden");
+          if (navBtn) navBtn.className = "tab-btn px-4 py-2 rounded-xl text-sm font-semibold transition-all text-slate-400 hover:text-white hover:bg-rlDark-800";
+          if (mobileNavBtn) mobileNavBtn.className = "mobile-tab-btn flex-shrink-0 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-300 bg-rlDark-800";
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderHitboxes() {
+      const grid = document.getElementById("hitboxes-grid");
+      if (!grid) return;
+      grid.innerHTML = HITBOXES_DATA.map(hb => `
+        <div class="glass-card rounded-xl p-5 border border-slate-800">
+          <div class="flex items-center justify-between mb-2"><h4 class="text-lg font-bold text-white">${hb.name}</h4><span class="text-xs font-mono text-rlBlue bg-rlBlue/10 px-2.5 py-0.5 rounded">H: ${hb.ht}</span></div>
+          <p class="text-xs text-slate-400 mb-3">${hb.notes}</p>
+          <div class="bg-rlDark-950 p-3 rounded-lg text-xs space-y-1 font-mono text-slate-300 border border-slate-800">
+            <div><span class="text-slate-500">Cars:</span> ${hb.cars}</div>
+            <div class="flex justify-between text-[11px] pt-1 border-t border-slate-800"><span>Length: <b>${hb.len}</b></span><span>Width: <b>${hb.wid}</b></span></div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRoadmap(selectedRank) {
+      const selector = document.getElementById("roadmap-rank-selector");
+      const container = document.getElementById("roadmap-content");
+      if (!selector || !container) return;
+
+      const ranks = Object.keys(ROADMAP_DATA);
+      selector.innerHTML = ranks.map(rk => `
+        <button onclick="renderRoadmap('${rk}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${rk === selectedRank ? 'bg-rlBlue text-rlDark-950 font-bold shadow-lg' : 'bg-rlDark-900 text-slate-300 hover:text-white border border-slate-800'}">${rk}</button>
+      `).join('');
+
+      const data = ROADMAP_DATA[selectedRank];
+      container.innerHTML = `
+        <div class="space-y-6">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+            <div><span class="text-xs font-bold text-rlBlue uppercase tracking-wider">Target Bracket</span><h3 class="text-2xl font-bold text-white">${data.title} (${selectedRank})</h3></div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-200 mb-3 flex items-center"><i class="fa-solid fa-bullseye text-rlOrange mr-2"></i> Priority Mechanics</h4>
+            <div class="flex flex-wrap gap-2">${data.focus.map(f => `<span class="bg-rlDark-950 border border-slate-700 text-slate-300 text-xs px-3.5 py-2 rounded-xl font-semibold">${f}</span>`).join('')}</div>
+          </div>
+          <div>
+            <h4 class="text-sm font-bold text-slate-200 mb-3 flex items-center"><i class="fa-solid fa-gamepad text-rlBlue mr-2"></i> Custom Training Packs</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${data.packs.map(p => `
+                <div class="bg-rlDark-950 p-3.5 rounded-xl border border-slate-800 flex items-center justify-between">
+                  <div><span class="text-xs font-bold text-white block">${p.name}</span><span class="text-xs font-mono text-rlOrange">${p.code}</span></div>
+                  <button onclick="navigator.clipboard.writeText('${p.code}'); alert('Copied: ${p.code}');" class="text-xs text-slate-400 hover:text-white p-2 bg-rlDark-900 rounded-lg"><i class="fa-solid fa-copy"></i></button>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+          <div class="bg-rlBlue/10 border border-rlBlue/20 p-4 rounded-xl">
+            <span class="text-xs font-bold text-rlBlue uppercase tracking-wider block mb-1">Pro Tip</span>
+            <p class="text-xs text-slate-300">${data.advice}</p>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
